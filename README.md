@@ -17,7 +17,7 @@ Let’s use the string **"abbcccdddd"** for a simple demonstration.
 
 The tree is constructed by combining nodes with the lowest frequencies until one node remains, which becomes the root of the tree. After merging, the final tree looks like this:
 
-![alt text]([https://i.ibb.co/vPVC7fY/Screen-Shot-2024-09-27-at-11-20-17-PM.png](https://i.ibb.co/1v1Rhg2/Screen-Shot-2024-09-28-at-12-53-01-AM.png))
+![alt text]([https://i.ibb.co/vPVC7fY/Screen-Shot-2024-09-27-at-11-20-17-PM.png](https://i.ibb.co/1v1Rhg2/Screen-Shot-2024-09-28-at-12-53-01-AM.png)
 
 
 ### Step 3: Huffman Codes
