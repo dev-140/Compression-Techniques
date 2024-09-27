@@ -41,7 +41,7 @@ def rle_decode(encoded_data):
 
 # Example usage
 if __name__ == "__main__":
-    text = "teessttt"
+    text = "abbcccdddd"
 
     # Compress the text using RLE
     encoded_text = rle_encode(text)

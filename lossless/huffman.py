@@ -1,96 +1,73 @@
 import heapq
-from collections import defaultdict, Counter
 
-# Node class for the Huffman tree
 class Node:
-    def __init__(self, char, freq):
-        self.char = char
-        self.freq = freq
-        self.left = None
-        self.right = None
+    def __init__(self, symbol=None, frequency=None):
+        """Initialize a new node for the Huffman tree."""
+        self.symbol = symbol
+        self.frequency = frequency
+        self.left = None  # Left child node
+        self.right = None  # Right child node
 
-    # Comparison methods for priority queue
     def __lt__(self, other):
-        return self.freq < other.freq
+        """Define less-than comparison for priority queue."""
+        return self.frequency < other.frequency
 
+def build_huffman_tree(chars, freq):
+    """Build the Huffman tree"""
+    priority_queue = [Node(char, f) for char, f in zip(chars, freq)]
+    heapq.heapify(priority_queue)  # Create a min-heap.
 
-# Function to generate Huffman codes from the tree
-def generate_codes(node, prefix="", code_map={}):
-    if node:
-        # If it's a leaf node (character node)
-        if node.char is not None:
-            code_map[node.char] = prefix
-        # Traverse left (0) and right (1)
-        generate_codes(node.left, prefix + "0", code_map)
-        generate_codes(node.right, prefix + "1", code_map)
-    return code_map
+    while len(priority_queue) > 1:
+        left_child = heapq.heappop(priority_queue)  # Smallest frequency node.
+        right_child = heapq.heappop(priority_queue)  # Next smallest frequency.
+        # Create and merge nodes.
+        merged_node = Node(frequency=left_child.frequency + right_child.frequency)
+        merged_node.left = left_child
+        merged_node.right = right_child
+        heapq.heappush(priority_queue, merged_node)  # Push merged node back.
 
+    return priority_queue[0]  # Root of the Huffman tree.
 
-# Function to build the Huffman Tree
-def build_huffman_tree(frequencies):
-    # Priority queue (min-heap) to store nodes
-    heap = [Node(char, freq) for char, freq in frequencies.items()]
-    heapq.heapify(heap)
+def generate_huffman_codes(node, code="", huffman_codes={}):
+    """Generate Huffman codes by traversing the tree."""
+    if node is not None:
+        if node.symbol is not None:
+            huffman_codes[node.symbol] = code  # Store code for leaf node.
+        generate_huffman_codes(node.left, code + "0", huffman_codes)  # Traverse left.
+        generate_huffman_codes(node.right, code + "1", huffman_codes)  # Traverse right.
+    return huffman_codes
 
-    while len(heap) > 1:
-        # Pop two nodes with lowest frequency
-        left = heapq.heappop(heap)
-        right = heapq.heappop(heap)
+def decode_huffman(root, encoded_string):
+    """Decode the encoded string using the Huffman tree."""
+    decoded_string = ""
+    current_node = root  # Start from the root.
 
-        # Create a new internal node with combined frequency
-        merged = Node(None, left.freq + right.freq)
-        merged.left = left
-        merged.right = right
+    for bit in encoded_string:
+        current_node = current_node.left if bit == '0' else current_node.right  # Traverse tree.
+        if current_node.symbol is not None:
+            decoded_string += current_node.symbol  # Append symbol to result.
+            current_node = root  # Reset to root for the next symbol.
 
-        # Push the new node back into the heap
-        heapq.heappush(heap, merged)
+    return decoded_string
 
-    # The remaining node is the root of the Huffman Tree
-    return heap[0]
+# Example input characters and frequencies.
+chars = ['a', 'b', 'c', 'd']
+freq = [1, 2, 3, 4]
 
+# Build the Huffman tree.
+root = build_huffman_tree(chars, freq)
 
-# Function to compress text using Huffman Coding
-def huffman_compress(text):
-    # Step 1: Calculate frequency of each character
-    frequencies = Counter(text)
+# Generate Huffman codes.
+huffman_codes = generate_huffman_codes(root)
 
-    # Step 2: Build the Huffman Tree
-    root = build_huffman_tree(frequencies)
+# Print Huffman codes.
+for char, code in huffman_codes.items():
+    print(f"Character: {char}, Code: {code}")
 
-    # Step 3: Generate Huffman codes
-    huffman_codes = generate_codes(root)
+# Generate encoded string.
+encoded_string = ''.join(huffman_codes[char] * freq[i] for i, char in enumerate(chars))
+print("Encoded string:", encoded_string)
 
-    # Step 4: Encode the input text
-    compressed_text = ''.join(huffman_codes[char] for char in text)
-
-    return compressed_text, huffman_codes
-
-
-# Function to decompress the Huffman-encoded text
-def huffman_decompress(compressed_text, huffman_codes):
-    # Reverse the code map for decoding
-    reversed_codes = {v: k for k, v in huffman_codes.items()}
-
-    # Decode the binary string using the reversed map
-    decoded_text = ""
-    buffer = ""
-    for bit in compressed_text:
-        buffer += bit
-        if buffer in reversed_codes:
-            decoded_text += reversed_codes[buffer]
-            buffer = ""
-    return decoded_text
-
-
-# Example usage
-if __name__ == "__main__":
-    text = "huffman coding in python"
-    
-    # Compress the text
-    compressed_text, huffman_codes = huffman_compress(text)
-    print("Compressed text:", compressed_text)
-    print("Huffman Codes:", huffman_codes)
-
-    # Decompress the text
-    decompressed_text = huffman_decompress(compressed_text, huffman_codes)
-    print("Decompressed text:", decompressed_text)
+# Decode the string.
+decoded_string = decode_huffman(root, encoded_string)
+print("Decoded string:", decoded_string)
