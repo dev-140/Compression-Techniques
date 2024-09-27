@@ -25,10 +25,10 @@ Traverse the tree to generate binary codes for each character:
 
 | Character | Huffman Code |
 |-----------|--------------|
-| a         | 010          |
-| b         | 011          |
-| c         | 00           |
-| d         | 1            |
+| a         | 110          |
+| b         | 111          |
+| c         | 10           |
+| d         | 0            |
 
 ### Step 4: Compress the Text
 
@@ -37,5 +37,5 @@ Using the Huffman codes, compress **"abbcccdddd"** into the following binary str
 
 ### Step 5: Decompress the Text
 
-Decompress the binary string `01001101100000011111` back into the original string:
+Decompress the binary string `1101111111010100000` back into the original string:
 
