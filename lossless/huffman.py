@@ -1,4 +1,5 @@
 import heapq
+from collections import Counter
 
 class Node:
     def __init__(self, symbol=None, frequency=None):
@@ -13,7 +14,7 @@ class Node:
         return self.frequency < other.frequency
 
 def build_huffman_tree(chars, freq):
-    """Build the Huffman tree"""
+    """Build the Huffman tree."""
     priority_queue = [Node(char, f) for char, f in zip(chars, freq)]
     heapq.heapify(priority_queue)  # Create a min-heap.
 
@@ -50,9 +51,13 @@ def decode_huffman(root, encoded_string):
 
     return decoded_string
 
-# Example input characters and frequencies.
-chars = ['a', 'b', 'c', 'd']
-freq = [1, 2, 3, 4]
+# Input string.
+input_string = "abbcccdddd"
+
+# Calculate frequencies of each character.
+freq_counter = Counter(input_string)
+chars = list(freq_counter.keys())
+freq = list(freq_counter.values())
 
 # Build the Huffman tree.
 root = build_huffman_tree(chars, freq)
@@ -64,8 +69,8 @@ huffman_codes = generate_huffman_codes(root)
 for char, code in huffman_codes.items():
     print(f"Character: {char}, Code: {code}")
 
-# Generate encoded string.
-encoded_string = ''.join(huffman_codes[char] * freq[i] for i, char in enumerate(chars))
+# Generate encoded string based on frequencies.
+encoded_string = ''.join(huffman_codes[char] * freq_counter[char] for char in chars)
 print("Encoded string:", encoded_string)
 
 # Decode the string.
